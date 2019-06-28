@@ -1,0 +1,22 @@
+背景：
+1、WebView默认缓存大小有限，且时效段
+2、
+
+可参考：
+1、VasSonic
+2、CacheWebView
+
+
+要支持的功能：
+1、预下载资源包、更新
+2、资源包中没有的资源，走WebView自己的加载，对指定类型的文件自动缓存，不缓存html、json
+3、和App的Glide共用图片缓存
+	File file = Glide.with(context)
+        .load(url)
+        .downloadOnly(width, height)
+		.submit()
+        .get();
+4、下载文件工具类，默认HttpUrlConnection，定义一套接口
+5、DiskLruCache
+6、资源包解压后，url和本地文件如何映射？
+
