@@ -1,3 +1,10 @@
 <manifest
     xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.lx.lib.webviewcache"/>
+    package="com.lx.lib.webviewcache">
+
+    <application>
+        <activity
+            android:name=".WebActivity"
+            android:screenOrientation="portrait"/>
+    </application>
+</manifest>

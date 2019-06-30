@@ -19,6 +19,7 @@ public final class WebViewCacheTestActivity extends AppCompatActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_web_view_cache_test);
         etUrl = findViewById(R.id.et_url);
+        etUrl.setText("https://m.leka.club/childrens_day_activity/index.html");
         findViewById(R.id.btn_open_url).setOnClickListener(this);
     }
 

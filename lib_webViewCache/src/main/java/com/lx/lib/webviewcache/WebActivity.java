@@ -12,6 +12,8 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
+import java.io.File;
+
 /**
  * Created by glennli on 2019/6/26.<br/>
  */
@@ -22,21 +24,34 @@ public final class WebActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_web);
+        init();
         mWebView = findViewById(R.id.web_view);
+        initWebView();
+        String url = getIntent().getStringExtra("url");
+        mWebView.loadUrl(url);
+    }
+
+    private void init() {
+        WebViewCacheManager.Config config = new WebViewCacheManager.Config();
+        config.cacheDirPath(getExternalCacheDir() + File.separator + "LXWebViewCache");
+        config.getCacheExtensionConfig().add("html");
+        WebViewCacheManager.get().init(this, config);
     }
 
     private void initWebView() {
+        // 清除所有WebView的内存和磁盘缓存，每次全量加载，方便调试
+        mWebView.clearCache(true);
         mWebView.setWebViewClient(new WebViewClient() {
             @Nullable
             @Override
             public WebResourceResponse shouldInterceptRequest(WebView view, String url) {
-                return super.shouldInterceptRequest(view, url);
+                return WebViewCacheManager.get().interceptRequest(url);
             }
 
             @Nullable
             @Override
             public WebResourceResponse shouldInterceptRequest(WebView view, WebResourceRequest request) {
-                return super.shouldInterceptRequest(view, request);
+                return WebViewCacheManager.get().interceptRequest(request);
             }
         });
         mWebView.setDownloadListener(new DownloadListener() {
@@ -55,14 +70,15 @@ public final class WebActivity extends AppCompatActivity {
         mWebView.removeJavascriptInterface("searchBoxJavaBridge_");
         mWebView.removeJavascriptInterface("accessibility");
         mWebView.removeJavascriptInterface("accessibilityTraversal");
-//        mWebView.addJavascriptInterface(new HFBridge(), "JSBridge");
         WebSettings settings = mWebView.getSettings();
         settings.setJavaScriptEnabled(true);
-        settings.setCacheMode(WebSettings.LOAD_DEFAULT);
-        settings.setSavePassword(false);
-        settings.setLayoutAlgorithm(WebSettings.LayoutAlgorithm.NARROW_COLUMNS);
-        settings.setUseWideViewPort(true);
-        settings.setLoadWithOverviewMode(true);
+        settings.setCacheMode(WebSettings.LOAD_NO_CACHE);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mWebView.destroy();
     }
 }
 
