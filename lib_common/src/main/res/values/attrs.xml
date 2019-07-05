@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="RoundImageView">
+        <!--圆形-->
+        <attr name="riv_roundAsCircle" format="boolean"/>
+        <!--全部圆角半径-->
+        <attr name="riv_roundCorner" format="integer|dimension"/>
+        <!--针对各个角的半径-->
+        <attr name="riv_cornerTopLeft" format="integer|dimension"/>
+        <attr name="riv_cornerTopRight" format="integer|dimension"/>
+        <attr name="riv_cornerBottomLeft" format="integer|dimension"/>
+        <attr name="riv_cornerBottomRight" format="integer|dimension"/>
+        <attr name="riv_borderColor" format="color|reference"/>
+        <attr name="riv_maskColor" format="color|reference"/>
+        <attr name="riv_showMask" format="boolean"/>
+        <attr name="riv_borderWidth" format="integer|dimension"/>
+    </declare-styleable>
+</resources>

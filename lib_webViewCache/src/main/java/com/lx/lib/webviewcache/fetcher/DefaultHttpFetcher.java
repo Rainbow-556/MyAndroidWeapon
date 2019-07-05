@@ -24,7 +24,7 @@ public final class DefaultHttpFetcher {
             // conn.connect()方法不必显式调用，当调用conn.getInputStream()方法时内部也会自动调用connect方法
             conn.connect();
 //            String responseHeader = getResponseHeader(conn);
-//            FLogger.i("response: " + url + ", header: " + responseHeader);
+//            FLogger.i(WebViewCacheManager.TAG, "response: " + url + ", header: " + responseHeader);
             // 调用getInputStream方法后，服务端才会收到请求，并阻塞式地接收服务端返回的数据
             InputStream is = conn.getInputStream();
             return is;

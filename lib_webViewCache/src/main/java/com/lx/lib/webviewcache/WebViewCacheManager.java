@@ -10,6 +10,7 @@ import android.webkit.WebResourceResponse;
 
 import com.lx.lib.common.util.FLogger;
 import com.lx.lib.common.util.MD5Util;
+import com.lx.lib.common.util.RunUtil;
 import com.lx.lib.webviewcache.cache.DefaultDiskCache;
 import com.lx.lib.webviewcache.fetcher.DefaultHttpFetcher;
 import com.lx.lib.webviewcache.util.MimeTypeUtil;
@@ -29,8 +30,9 @@ public final class WebViewCacheManager {
         return Holder.INSTANCE;
     }
 
+    public static final String TAG = "WebViewCache";
     private Context mContext;
-    private boolean isInit;
+    private boolean isInit, isEnable = true;
     private Config mConfig;
     private DefaultDiskCache mDiskCache;
 
@@ -41,17 +43,34 @@ public final class WebViewCacheManager {
         mDiskCache = new DefaultDiskCache(new File(config.getCacheDirPath()), 1, config.getCacheSize());
     }
 
+    public void setEnable(boolean enable) {
+        isEnable = enable;
+    }
+
+    public void clear() {
+        RunUtil.runOnWorkerThread(new RunUtil.Work() {
+            @Override
+            public Object execute() {
+                mDiskCache.clear();
+                return null;
+            }
+        });
+    }
+
     public WebResourceResponse interceptRequest(String url) {
-//        FLogger.d("below 21 shouldInterceptRequest: " + url);
-        if (!isInit) {
-            return null;
-        }
+//        FLogger.d(TAG, "below 21 shouldInterceptRequest: " + url);
         return null;
     }
 
+    /**
+     * WebView中所有的网络请求都会走该方法(例如：ajax、js、css、html、图片等)
+     *
+     * @param request
+     * @return
+     */
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     public WebResourceResponse interceptRequest(WebResourceRequest request) {
-        if (!isInit) {
+        if (!isInit || !isEnable) {
             return null;
         }
         if (!"GET".equalsIgnoreCase(request.getMethod())) {
@@ -65,7 +84,7 @@ public final class WebViewCacheManager {
         final String cacheKey = MD5Util.md5(url);
         InputStream inputStream = mDiskCache.get(cacheKey);
         if (inputStream != null) {
-            FLogger.d("from cache: " + url);
+            FLogger.d(TAG, "from cache: " + url);
             return makeResponse(uri, inputStream);
         }
         DefaultHttpFetcher fetcher = new DefaultHttpFetcher();
@@ -74,15 +93,15 @@ public final class WebViewCacheManager {
             mDiskCache.put(cacheKey, inputStream);
             inputStream = mDiskCache.get(cacheKey);
             if (inputStream != null) {
-                FLogger.d("from net: " + url);
+                FLogger.d(TAG, "from net (CustomFetcher): " + url);
                 return makeResponse(uri, inputStream);
             }
         }
-        FLogger.d("from net 2: " + url);
+        FLogger.d(TAG, "from net (WebView): " + url);
         return null;
     }
 
-    private WebResourceResponse makeResponse(Uri uri, InputStream inputStream) {
+    private static WebResourceResponse makeResponse(Uri uri, InputStream inputStream) {
         return new WebResourceResponse(MimeTypeUtil.getMimeTypeFromUrl(uri), "utf-8", inputStream);
     }
 
@@ -94,9 +113,9 @@ public final class WebViewCacheManager {
     public static class Config {
         private String cacheDirPath;
         /**
-         * 默认100M
+         * 默认50M
          */
-        private long cacheSize = 100 * 1024 * 1024;
+        private long cacheSize = 50 * 1024 * 1024;
         private CacheExtensionConfig cacheExtensionConfig = new CacheExtensionConfig();
 
         public Config cacheDirPath(String cacheDirPath) {

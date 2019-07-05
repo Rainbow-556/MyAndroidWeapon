@@ -14,19 +14,35 @@ public final class FLogger {
     }
 
     public static void d(Object msg) {
-        Log.d(TAG_MSG, "" + msg);
+        d(TAG_MSG, String.valueOf(msg));
+    }
+
+    public static void d(String tag, Object msg) {
+        Log.d(tag, String.valueOf(msg));
     }
 
     public static void w(Object msg) {
-        Log.w(TAG_MSG, "" + msg);
+        w(TAG_MSG, String.valueOf(msg));
+    }
+
+    public static void w(String tag, Object msg) {
+        Log.w(tag, String.valueOf(msg));
     }
 
     public static void i(Object msg) {
-        Log.i(TAG_MSG, "" + msg);
+        i(TAG_MSG, String.valueOf(msg));
+    }
+
+    public static void i(String tag, Object msg) {
+        Log.i(tag, String.valueOf(msg));
     }
 
     public static void e(Object msg) {
-        Log.e(TAG_MSG, "" + msg);
+        e(TAG_MSG, String.valueOf(msg));
+    }
+
+    public static void e(String tag, Object msg) {
+        Log.e(tag, String.valueOf(msg));
     }
 
     public static void logException(Throwable throwable) {

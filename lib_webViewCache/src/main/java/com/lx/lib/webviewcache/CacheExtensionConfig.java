@@ -7,14 +7,20 @@ import java.util.HashSet;
  */
 public final class CacheExtensionConfig {
     public static final String PNG = "png";
+    public static final String JPG = "jpg";
+    public static final String JPEG = "jpeg";
     public static final String JS = "js";
     public static final String CSS = "css";
+    public static final String ICO = "ico";
     private HashSet<String> cacheExtensions = new HashSet<>(10);
 
     public CacheExtensionConfig() {
         cacheExtensions.add(PNG);
+        cacheExtensions.add(JPG);
+        cacheExtensions.add(JPEG);
         cacheExtensions.add(JS);
         cacheExtensions.add(CSS);
+        cacheExtensions.add(ICO);
     }
 
     public CacheExtensionConfig add(String extension) {
