@@ -3,6 +3,8 @@ package com.lx.lib.webviewcache.util;
 import android.net.Uri;
 import android.text.TextUtils;
 
+import com.lx.lib.webviewcache.CacheExtension;
+
 /**
  * Created by lixiang on 2019/6/29.
  */
@@ -10,27 +12,27 @@ public final class MimeTypeUtil {
     public static String getMimeTypeFromUrl(Uri uri) {
         final String extension = getExtensionFromUrl(uri);
         switch (extension) {
-            case "png":
+            case CacheExtension.PNG:
                 return "image/png";
-            case "jpeg":
-            case "jpg":
+            case CacheExtension.JPG:
+            case CacheExtension.JPEG:
                 return "image/jpeg";
-            case "webp":
+            case CacheExtension.WEBP:
                 return "image/webp";
-            case "gif":
+            case CacheExtension.GIF:
                 return "image/gif";
-            case "ico":
+            case CacheExtension.ICO:
                 return "image/x-icon";
-            case "js":
+            case CacheExtension.JS:
                 return "application/javascript";
-            case "css":
+            case CacheExtension.CSS:
                 return "text/css";
-            case "html":
-            case "htm":
+            case CacheExtension.HTML:
+            case CacheExtension.HTM:
                 return "text/html";
-            case "json":
+            case CacheExtension.JSON:
                 return "application/json";
-            case "ttf":
+            case CacheExtension.TTF:
                 return "font/ttf";
             default:
                 return "";

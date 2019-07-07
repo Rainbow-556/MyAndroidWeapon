@@ -4,6 +4,7 @@ import android.annotation.TargetApi;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Build;
+import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebResourceResponse;
@@ -32,7 +33,7 @@ public final class WebViewCacheManager {
 
     public static final String TAG = "WebViewCache";
     private Context mContext;
-    private boolean isInit, isEnable = true;
+    private boolean isInit, isEnable = true, isDebug = true;
     private Config mConfig;
     private DefaultDiskCache mDiskCache;
 
@@ -40,11 +41,19 @@ public final class WebViewCacheManager {
         isInit = true;
         mContext = context.getApplicationContext();
         mConfig = config;
-        mDiskCache = new DefaultDiskCache(new File(config.getCacheDirPath()), 1, config.getCacheSize());
+        mDiskCache = new DefaultDiskCache(new File(config.getCacheDirPath()), 1, config.getMaxCacheSize());
     }
 
     public void setEnable(boolean enable) {
         isEnable = enable;
+    }
+
+    public void setDebug(boolean debug) {
+        isDebug = debug;
+    }
+
+    public boolean isDebug() {
+        return isDebug;
     }
 
     public void clear() {
@@ -69,6 +78,7 @@ public final class WebViewCacheManager {
      * @return
      */
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+    @Nullable
     public WebResourceResponse interceptRequest(WebResourceRequest request) {
         if (!isInit || !isEnable) {
             return null;
@@ -84,7 +94,9 @@ public final class WebViewCacheManager {
         final String cacheKey = MD5Util.md5(url);
         InputStream inputStream = mDiskCache.get(cacheKey);
         if (inputStream != null) {
-            FLogger.d(TAG, "from cache: " + url);
+            if (isDebug) {
+                FLogger.d(TAG, "from cache: " + url);
+            }
             return makeResponse(uri, inputStream);
         }
         DefaultHttpFetcher fetcher = new DefaultHttpFetcher();
@@ -93,11 +105,15 @@ public final class WebViewCacheManager {
             mDiskCache.put(cacheKey, inputStream);
             inputStream = mDiskCache.get(cacheKey);
             if (inputStream != null) {
-                FLogger.d(TAG, "from net (CustomFetcher): " + url);
+                if (isDebug) {
+                    FLogger.d(TAG, "from net (CustomFetcher): " + url);
+                }
                 return makeResponse(uri, inputStream);
             }
         }
-        FLogger.d(TAG, "from net (WebView): " + url);
+        if (isDebug) {
+            FLogger.d(TAG, "from net (WebView): " + url);
+        }
         return null;
     }
 
@@ -107,16 +123,16 @@ public final class WebViewCacheManager {
 
     private boolean checkExtension(Uri uri) {
         String extension = MimeTypeUtil.getExtensionFromUrl(uri);
-        return mConfig.cacheExtensionConfig.contains(extension);
+        return mConfig.cacheExtension.contains(extension);
     }
 
-    public static class Config {
+    public static final class Config {
         private String cacheDirPath;
         /**
          * 默认50M
          */
-        private long cacheSize = 50 * 1024 * 1024;
-        private CacheExtensionConfig cacheExtensionConfig = new CacheExtensionConfig();
+        private long maxCacheSize = 50 * 1024 * 1024;
+        private CacheExtension cacheExtension = new CacheExtension();
 
         public Config cacheDirPath(String cacheDirPath) {
             if (TextUtils.isEmpty(cacheDirPath)) {
@@ -130,12 +146,23 @@ public final class WebViewCacheManager {
             return cacheDirPath;
         }
 
-        public CacheExtensionConfig getCacheExtensionConfig() {
-            return cacheExtensionConfig;
+        public Config addCacheExtension(String extension) {
+            cacheExtension.add(extension);
+            return this;
         }
 
-        public long getCacheSize() {
-            return cacheSize;
+        public Config removeCacheExtension(String extension) {
+            cacheExtension.remove(extension);
+            return this;
+        }
+
+        public Config maxCacheSize(long maxCacheSize) {
+            this.maxCacheSize = maxCacheSize;
+            return this;
+        }
+
+        public long getMaxCacheSize() {
+            return maxCacheSize;
         }
     }
 }

@@ -8,12 +8,12 @@ import android.os.Looper;
  * Created by lixiang on 2019/1/16.<br/>
  */
 public final class RunUtil {
-    public interface WorkCallback<T> {
-        void onDone(T data);
-    }
-
     public interface Work<T> {
         T execute();
+    }
+
+    public interface WorkCallback<T> {
+        void onDone(T data);
     }
 
     private static final Handler UI_HANDLER = new Handler(Looper.getMainLooper());

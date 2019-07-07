@@ -22,9 +22,13 @@ public final class DefaultDiskCache {
         mMaxSize = maxSize;
     }
 
-    private synchronized DiskLruCache getDiskLruCache() throws Exception {
+    private DiskLruCache getDiskLruCache() throws Exception {
         if (mDiskLruCache == null) {
-            mDiskLruCache = DiskLruCache.open(mDir, mVersion, 1, mMaxSize);
+            synchronized (this) {
+                if (mDiskLruCache == null) {
+                    mDiskLruCache = DiskLruCache.open(mDir, mVersion, 1, mMaxSize);
+                }
+            }
         }
         return mDiskLruCache;
     }
@@ -34,7 +38,7 @@ public final class DefaultDiskCache {
         try {
             DiskLruCache.Editor editor = getDiskLruCache().edit(cacheKey);
             if (editor != null) {
-                byte[] buffer = new byte[1024];
+                final byte[] buffer = new byte[2048];
                 out = editor.newOutputStream(0);
                 int count;
                 while ((count = in.read(buffer)) != -1) {

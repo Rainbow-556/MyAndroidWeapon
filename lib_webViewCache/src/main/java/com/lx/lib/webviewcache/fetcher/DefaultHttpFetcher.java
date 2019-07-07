@@ -23,8 +23,10 @@ public final class DefaultHttpFetcher {
             // 在对各种参数配置完成后，通过调用connect方法建立TCP连接，但是并未真正获取数据
             // conn.connect()方法不必显式调用，当调用conn.getInputStream()方法时内部也会自动调用connect方法
             conn.connect();
-//            String responseHeader = getResponseHeader(conn);
-//            FLogger.i(WebViewCacheManager.TAG, "response: " + url + ", header: " + responseHeader);
+//            if (WebViewCacheManager.get().isDebug()) {
+//                String responseHeader = getResponseHeader(conn);
+//                FLogger.i(WebViewCacheManager.TAG, "response: " + url + ", header: " + responseHeader);
+//            }
             // 调用getInputStream方法后，服务端才会收到请求，并阻塞式地接收服务端返回的数据
             InputStream is = conn.getInputStream();
             return is;

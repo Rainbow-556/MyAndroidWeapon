@@ -7,7 +7,8 @@
 
 
 要支持的功能：
-1、预下载资源包、更新
+1、预下载资源包、更新(写脚本抓取要缓存到客户端的url，把该页面所有资源下载下来(Jsoup)，压缩，上传，App再去下载解压？)
+    java代码抓取url网页的html，貌似只能解析出js、css，因为web端打包方式是把页面html用业务js来实现
 2、资源包中没有的资源，走WebView自己的加载，对指定类型的文件自动缓存，不缓存html、json
 3、和App的Glide共用图片缓存
 	File file = Glide.with(context)
