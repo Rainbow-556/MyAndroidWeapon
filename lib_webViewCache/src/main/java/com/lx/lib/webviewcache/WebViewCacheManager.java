@@ -80,6 +80,9 @@ public final class WebViewCacheManager {
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     @Nullable
     public WebResourceResponse interceptRequest(WebResourceRequest request) {
+        if (isDebug) {
+            FLogger.i(TAG, "interceptRequest: thread=" + Thread.currentThread().getName() + ", " + request.getUrl().toString());
+        }
         if (!isInit || !isEnable) {
             return null;
         }
@@ -91,8 +94,7 @@ public final class WebViewCacheManager {
             return null;
         }
         final String url = uri.toString();
-        final String cacheKey = MD5Util.md5(url);
-        InputStream inputStream = mDiskCache.get(cacheKey);
+        InputStream inputStream = mDiskCache.get(url);
         if (inputStream != null) {
             if (isDebug) {
                 FLogger.d(TAG, "from cache: " + url);
@@ -102,8 +104,8 @@ public final class WebViewCacheManager {
         DefaultHttpFetcher fetcher = new DefaultHttpFetcher();
         inputStream = fetcher.fetch("GET", url);
         if (inputStream != null) {
-            mDiskCache.put(cacheKey, inputStream);
-            inputStream = mDiskCache.get(cacheKey);
+            mDiskCache.put(url, inputStream);
+            inputStream = mDiskCache.get(url);
             if (inputStream != null) {
                 if (isDebug) {
                     FLogger.d(TAG, "from net (CustomFetcher): " + url);

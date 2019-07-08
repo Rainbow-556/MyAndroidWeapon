@@ -1,7 +1,10 @@
 package com.lx.lib.webviewcache.cache;
 
 import com.lx.lib.common.util.CommonUtil;
+import com.lx.lib.common.util.FLogger;
+import com.lx.lib.common.util.MD5Util;
 import com.lx.lib.common.util.disklrucache.DiskLruCache;
+import com.lx.lib.webviewcache.WebViewCacheManager;
 
 import java.io.File;
 import java.io.InputStream;
@@ -11,7 +14,7 @@ import java.io.OutputStream;
  * Created by lixiang on 2019/6/30.
  */
 public final class DefaultDiskCache {
-    private DiskLruCache mDiskLruCache;
+    private volatile DiskLruCache mDiskLruCache;
     private File mDir;
     private int mVersion;
     private long mMaxSize;
@@ -33,7 +36,8 @@ public final class DefaultDiskCache {
         return mDiskLruCache;
     }
 
-    public void put(String cacheKey, InputStream in) {
+    public void put(String url, InputStream in) {
+        final String cacheKey = generateCacheKey(url);
         OutputStream out = null;
         try {
             DiskLruCache.Editor editor = getDiskLruCache().edit(cacheKey);
@@ -49,15 +53,19 @@ public final class DefaultDiskCache {
             getDiskLruCache().flush();
         } catch (Exception e) {
             e.printStackTrace();
+            boolean remove = remove(cacheKey);
+            if (WebViewCacheManager.get().isDebug()) {
+                FLogger.e(WebViewCacheManager.TAG, "add cache fail, remove old file success=" + remove + ", url=" + url);
+            }
         } finally {
             CommonUtil.closeQuietly(in);
             CommonUtil.closeQuietly(out);
         }
     }
 
-    public InputStream get(String cacheKey) {
+    public InputStream get(String url) {
         try {
-            DiskLruCache.Snapshot snapshot = getDiskLruCache().get(cacheKey);
+            DiskLruCache.Snapshot snapshot = getDiskLruCache().get(generateCacheKey(url));
             if (snapshot != null) {
                 return snapshot.getInputStream(0);
             }
@@ -65,6 +73,24 @@ public final class DefaultDiskCache {
             e.printStackTrace();
         }
         return null;
+    }
+
+    public boolean remove(String url) {
+        try {
+            return getDiskLruCache().remove(generateCacheKey(url));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public long size() {
+        try {
+            return getDiskLruCache().size();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return 0;
+        }
     }
 
     public synchronized void clear() {
@@ -76,5 +102,9 @@ public final class DefaultDiskCache {
             // DiskLruCache.delete()调用之后，就无法使用了，置为null，下次用时需要重新初始化
             mDiskLruCache = null;
         }
+    }
+
+    private static String generateCacheKey(String url) {
+        return MD5Util.md5(url);
     }
 }
