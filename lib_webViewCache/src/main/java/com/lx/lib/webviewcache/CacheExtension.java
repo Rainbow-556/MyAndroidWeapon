@@ -23,6 +23,7 @@ public final class CacheExtension {
     public static final String HTM = "htm";
     // 字体
     public static final String TTF = "ttf";
+    public static final String WOFF = "woff";
 
     private HashSet<String> cacheExtensions = new HashSet<>(15);
 
@@ -36,6 +37,7 @@ public final class CacheExtension {
         cacheExtensions.add(CSS);
         cacheExtensions.add(ICO);
         cacheExtensions.add(TTF);
+        cacheExtensions.add(WOFF);
     }
 
     public void add(String extension) {

@@ -34,6 +34,8 @@ public final class MimeTypeUtil {
                 return "application/json";
             case CacheExtension.TTF:
                 return "font/ttf";
+            case CacheExtension.WOFF:
+                return "font/woff";
             default:
                 return "";
         }
