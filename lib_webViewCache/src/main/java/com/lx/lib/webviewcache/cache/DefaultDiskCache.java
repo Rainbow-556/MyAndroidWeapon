@@ -37,6 +37,9 @@ public final class DefaultDiskCache {
     }
 
     public void put(String url, InputStream in) {
+        if (in == null) {
+            return;
+        }
         final String cacheKey = generateCacheKey(url);
         OutputStream out = null;
         try {
@@ -93,7 +96,7 @@ public final class DefaultDiskCache {
         }
     }
 
-    public synchronized void clear() {
+    public void clear() {
         try {
             getDiskLruCache().delete();
         } catch (Exception e) {

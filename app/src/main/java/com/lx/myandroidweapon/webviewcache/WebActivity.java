@@ -1,6 +1,7 @@
 package com.lx.myandroidweapon.webviewcache;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.net.http.SslError;
 import android.os.Bundle;
@@ -14,6 +15,7 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
+import com.lx.lib.common.util.FLogger;
 import com.lx.lib.webviewcache.WebViewCacheManager;
 import com.lx.myandroidweapon.R;
 
@@ -37,6 +39,20 @@ public final class WebActivity extends AppCompatActivity {
         // 清除所有WebView的内存和磁盘缓存，每次全量加载，方便调试
         mWebView.clearCache(true);
         mWebView.setWebViewClient(new WebViewClient() {
+            long start;
+
+            @Override
+            public void onPageStarted(WebView view, String url, Bitmap favicon) {
+                super.onPageStarted(view, url, favicon);
+                start = System.currentTimeMillis();
+            }
+
+            @Override
+            public void onPageFinished(WebView view, String url) {
+                super.onPageFinished(view, url);
+                FLogger.i(WebViewCacheManager.TAG, "load time: " + (System.currentTimeMillis() - start));
+            }
+
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
                 return super.shouldOverrideUrlLoading(view, url);
@@ -84,7 +100,6 @@ public final class WebActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        mWebView.stopLoading();
         mWebView.destroy();
     }
 }

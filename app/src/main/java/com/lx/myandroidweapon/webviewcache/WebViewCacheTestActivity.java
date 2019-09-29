@@ -24,8 +24,9 @@ public final class WebViewCacheTestActivity extends AppCompatActivity implements
         setContentView(R.layout.activity_web_view_cache_test);
         etUrl = findViewById(R.id.et_url);
         btnCacheStatus = findViewById(R.id.btn_cache_status);
-        etUrl.setText("https://m.leka.club/childrens_day_activity/index.html");
+//        etUrl.setText("https://m.leka.club/childrens_day_activity/index.html");
 //        etUrl.setText("https://m.leka.club/follow_wechat/index.html");
+        etUrl.setText("https://m.leka.club/download/app.html");
 //        etUrl.setText("https://www.baidu.com");
         findViewById(R.id.btn_open_url).setOnClickListener(this);
         findViewById(R.id.btn_clear_cache).setOnClickListener(this);

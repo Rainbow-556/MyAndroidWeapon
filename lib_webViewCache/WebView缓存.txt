@@ -20,3 +20,15 @@
 5、DiskLruCache
 6、资源包解压后，url和本地文件如何映射？
 
+
+笔记：
+WebViewClient.shouldInterceptRequest()是运行在一个单独子线程中，这里只构建WebResourceResponse，让该方法快速返回，期间异步从网络加载资源
+参考：https://stackoverflow.com/questions/33370123/how-to-get-webviewclient-shouldinterceptrequest-invoked-asynchronously
+https://huangxiquan.github.io/2017/02/13/webview-async-image/
+
+interceptRequest()：该方法是单线程调用，线程为：TaskSchedulerFo
+WebResourceResponse.getData():同上
+LxInputStream.read()：同上
+
+把加载InputStream放到LxInputStream.read()中时，比放在interceptRequest()网页加载更慢
+
