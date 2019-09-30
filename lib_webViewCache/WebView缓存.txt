@@ -30,5 +30,10 @@ interceptRequest()：该方法是单线程调用，线程为：TaskSchedulerFo
 WebResourceResponse.getData():同上
 LxInputStream.read()：同上
 
+interceptRequest()执行线程：5121，5124，5117
+LxInputStream.read()执行线程：5121，5124，5117
+华为手机WebView加载资源可能是3个线程
+
+
 把加载InputStream放到LxInputStream.read()中时，比放在interceptRequest()网页加载更慢
 

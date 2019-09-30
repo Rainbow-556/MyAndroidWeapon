@@ -47,14 +47,24 @@ public final class WebActivity extends AppCompatActivity {
                 start = System.currentTimeMillis();
             }
 
+            /**
+             * 该方法为页面所有js加载完后的回调
+             * @param view
+             * @param url
+             */
             @Override
             public void onPageFinished(WebView view, String url) {
                 super.onPageFinished(view, url);
-                FLogger.i(WebViewCacheManager.TAG, "load time: " + (System.currentTimeMillis() - start));
+                FLogger.i(WebViewCacheManager.TAG, "load time: " + (System.currentTimeMillis() - start) + ": " + url);
             }
 
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
+//                if (url.startsWith("fenqile://app/")) {
+//                    Uri uri = Uri.parse(url);
+//                    view.loadUrl(uri.getQueryParameter("url"));
+//                    return false;
+//                }
                 return super.shouldOverrideUrlLoading(view, url);
             }
 
@@ -95,6 +105,15 @@ public final class WebActivity extends AppCompatActivity {
         WebSettings settings = mWebView.getSettings();
         settings.setJavaScriptEnabled(true);
         settings.setCacheMode(WebSettings.LOAD_DEFAULT);
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (mWebView.canGoBack()) {
+            mWebView.goBack();
+            return;
+        }
+        super.onBackPressed();
     }
 
     @Override

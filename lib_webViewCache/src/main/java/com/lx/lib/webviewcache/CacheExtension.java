@@ -15,6 +15,7 @@ public final class CacheExtension {
     public static final String JPEG = "jpeg";
     public static final String GIF = "gif";
     public static final String ICO = "ico";
+    public static final String BMP = "bmp";
     // 代码
     public static final String JS = "js";
     public static final String CSS = "css";

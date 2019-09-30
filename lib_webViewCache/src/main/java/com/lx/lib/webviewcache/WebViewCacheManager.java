@@ -83,7 +83,6 @@ public final class WebViewCacheManager {
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     @Nullable
     public WebResourceResponse interceptRequest(WebResourceRequest request) {
-//        FLogger.e(WebViewCacheManager.TAG, "interceptRequest(): " + Thread.currentThread().getName());
         if (isDebug) {
 //            FLogger.i(TAG, "interceptRequest: thread=" + Thread.currentThread().getName()
 //                    + ", " + request.getUrl().toString() + ", headers=" + request.getRequestHeaders());
@@ -99,12 +98,16 @@ public final class WebViewCacheManager {
             return null;
         }
         final String url = uri.toString();
+//        FLogger.i(WebViewCacheManager.TAG, "interceptRequest(): "
+//                + Thread.currentThread().getName() + "-" + Thread.currentThread().getId());
         // read cache
 //        InputStream inputStream;
         InputStream inputStream = mDiskCache.get(url);
         if (inputStream != null) {
             if (isDebug) {
-                FLogger.d(TAG, "from cache: " + url);
+                Thread currentThread = Thread.currentThread();
+                FLogger.d(TAG, "interceptRequest(), from cache, "
+                        + currentThread.getName() + "-" + currentThread.getId() + ": " + url);
             }
             return makeResponse(uri, inputStream);
         }
@@ -121,13 +124,17 @@ public final class WebViewCacheManager {
             inputStream = mDiskCache.get(url);
             if (inputStream != null) {
                 if (isDebug) {
-                    FLogger.d(TAG, "from net (CustomFetcher): " + url);
+                    Thread currentThread = Thread.currentThread();
+                    FLogger.w(TAG, "interceptRequest(), from net (CustomFetcher), "
+                            + currentThread.getName() + "-" + currentThread.getId() + ": " + url);
                 }
                 return makeResponse(uri, inputStream);
             }
         }
         if (isDebug) {
-            FLogger.d(TAG, "from net (WebView): " + url);
+            Thread currentThread = Thread.currentThread();
+            FLogger.e(TAG, "interceptRequest(), rom net (WebView), "
+                    + currentThread.getName() + "-" + currentThread.getId() + ": " + url);
         }
         return null;
     }

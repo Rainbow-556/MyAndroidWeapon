@@ -13,14 +13,12 @@ public final class MimeTypeUtil {
         final String extension = getExtensionFromUrl(uri);
         switch (extension) {
             case CacheExtension.PNG:
-                return "image/png";
             case CacheExtension.JPG:
             case CacheExtension.JPEG:
-                return "image/jpeg";
             case CacheExtension.WEBP:
-                return "image/webp";
             case CacheExtension.GIF:
-                return "image/gif";
+            case CacheExtension.BMP:
+                return "image/*";
             case CacheExtension.ICO:
                 return "image/x-icon";
             case CacheExtension.JS:

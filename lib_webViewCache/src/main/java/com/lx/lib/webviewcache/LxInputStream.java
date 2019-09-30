@@ -13,6 +13,7 @@ import java.io.InputStream;
  * Created by glennli on 2019/9/29.<br/>
  */
 public final class LxInputStream extends InputStream {
+    private static final int NO_DATA = -1;
     private String url;
     private InputStream realInputStream;
 
@@ -23,7 +24,8 @@ public final class LxInputStream extends InputStream {
     @Override
     public int read() throws IOException {
         if (realInputStream == null) {
-//            FLogger.e(WebViewCacheManager.TAG, "LxInputStream.read(): " + Thread.currentThread().getName());
+            FLogger.e(WebViewCacheManager.TAG, "LxInputStream.read(): "
+                    + Thread.currentThread().getName() + "-" + Thread.currentThread().getId());
             final DefaultDiskCache diskCache = WebViewCacheManager.get().getDiskCache();
 //            InputStream cacheInputStream = diskCache.get(url);
 //            if (cacheInputStream != null) {
@@ -43,6 +45,6 @@ public final class LxInputStream extends InputStream {
                 realInputStream = diskCache.get(url);
             }
         }
-        return realInputStream == null ? -1 : realInputStream.read();
+        return realInputStream == null ? NO_DATA : realInputStream.read();
     }
 }
