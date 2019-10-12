@@ -20,6 +20,15 @@
 5、DiskLruCache
 6、资源包解压后，url和本地文件如何映射？
 
+新方案：
+1、解析要缓存的url的html中的js和css，并进一步解析其中的图片（.png等后缀），把以上url由服务器分发到App，App预下载这些资源
+HtmlUnit + Jsoup解析js动态生成的网页：
+https://blog.csdn.net/dietime1943/article/details/79035779
+http://htmlunit.sourceforge.net/
+
+css parser解析css：
+https://codeday.me/bug/20190320/791733.html
+http://cssparser.sourceforge.net/
 
 笔记：
 WebViewClient.shouldInterceptRequest()是运行在一个单独子线程中，这里只构建WebResourceResponse，让该方法快速返回，期间异步从网络加载资源
@@ -35,5 +44,6 @@ LxInputStream.read()执行线程：5121，5124，5117
 华为手机WebView加载资源可能是3个线程
 
 
-把加载InputStream放到LxInputStream.read()中时，比放在interceptRequest()网页加载更慢
+把加载InputStream放到LxInputStream.read()无参数的方法中时，比放在interceptRequest()网页加载更慢，
+read(@NonNull byte[] b, int off, int len)在该方法中，执行很快，减少了调用次数
 

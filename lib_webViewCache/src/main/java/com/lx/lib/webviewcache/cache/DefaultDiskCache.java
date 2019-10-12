@@ -66,6 +66,17 @@ public final class DefaultDiskCache {
         }
     }
 
+    public DiskLruCache.Editor getEditor(String url) {
+        final String cacheKey = generateCacheKey(url);
+        try {
+            DiskLruCache.Editor editor = getDiskLruCache().edit(cacheKey);
+            return editor;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     public InputStream get(String url) {
         try {
             DiskLruCache.Snapshot snapshot = getDiskLruCache().get(generateCacheKey(url));
