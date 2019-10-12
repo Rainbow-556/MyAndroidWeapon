@@ -1,1 +1,1 @@
-include ':app', ':lib_common', ':lib_webViewCache'
+include ':app', ':lib_common', ':lib_webViewCache', ':lib_java'
