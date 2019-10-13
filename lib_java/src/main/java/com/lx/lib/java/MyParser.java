@@ -18,16 +18,11 @@ import org.jsoup.select.Elements;
 import org.w3c.css.sac.InputSource;
 import org.w3c.dom.css.CSSRule;
 import org.w3c.dom.css.CSSRuleList;
-import org.w3c.dom.css.CSSStyleDeclaration;
-import org.w3c.dom.css.CSSStyleRule;
 import org.w3c.dom.css.CSSStyleSheet;
 
 import java.io.File;
 import java.io.FileReader;
-import java.io.StringReader;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * Created by glennli on 2019/10/12.<br/>
@@ -147,7 +142,7 @@ public final class MyParser {
                 if (rule instanceof CSSStyleRuleImpl) {
                     // 普通样式选择器，.box{}
                     final String cssText = rule.getCssText();
-                    System.out.println(cssText);
+//                    System.out.println(cssText);
 
                     int start = cssText.indexOf(prefix);
                     if (start == -1) {
@@ -160,7 +155,11 @@ public final class MyParser {
                         }
                         temp++;
                     }
-                    System.out.println(cssText.substring(start + prefix.length(), temp));
+                    String imgUrl = cssText.substring(start + prefix.length(), temp);
+                    if (imgUrl.endsWith(".png") || imgUrl.endsWith(".jpg")
+                            || imgUrl.endsWith(".jpeg") || imgUrl.endsWith(".gif") || imgUrl.endsWith(".webp")) {
+                        System.out.println(imgUrl);
+                    }
                 } else if (rule instanceof CSSFontFaceRuleImpl) {
                     // @font-face{}
 //                    System.out.println(rule.getCssText());
