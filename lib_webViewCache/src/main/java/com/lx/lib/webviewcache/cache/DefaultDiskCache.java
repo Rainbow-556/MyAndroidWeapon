@@ -98,6 +98,15 @@ public final class DefaultDiskCache {
         return false;
     }
 
+    public boolean contains(String key) {
+        try {
+            return getDiskLruCache().contains(key);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
     public long size() {
         try {
             return getDiskLruCache().size();

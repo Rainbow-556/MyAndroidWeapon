@@ -191,9 +191,9 @@ public final class DiskLruCache implements Closeable {
      * Opens the cache in {@code directory}, creating a cache if none exists
      * there.
      *
-     * @param directory  a writable directory
+     * @param directory a writable directory
      * @param valueCount the number of values per cache entry. Must be positive.
-     * @param maxSize    the maximum number of bytes this cache should use to store
+     * @param maxSize the maximum number of bytes this cache should use to store
      * @throws IOException if reading or writing the cache directory fails
      */
     public static DiskLruCache open(File directory, int appVersion, int valueCount, long maxSize)
@@ -431,6 +431,23 @@ public final class DiskLruCache implements Closeable {
         }
         return new Snapshot(key, entry.sequenceNumber, ins, entry.lengths);
     }
+
+    /* add contains() method by lixiang start*/
+
+    /**
+     * 检查缓存key是否存在，只是粗略的检查，因为某个key对应的Entry还没有写入完成，也会返回true
+     * ps：不能直接调用get()方法检查缓存是否存在，因为get()方法会改变该Entry的访问状态，get()方法的文档
+     *
+     * @param key
+     * @return
+     */
+    public synchronized boolean contains(String key) {
+        checkNotClosed();
+        validateKey(key);
+        return lruEntries.containsKey(key);
+    }
+
+    /* add contains() method by lixiang end*/
 
     /**
      * Returns an editor for the entry named {@code key}, or null if another
